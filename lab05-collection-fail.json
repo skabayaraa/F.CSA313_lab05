@@ -1,0 +1,145 @@
+{
+  "info": {
+    "_postman_id": "5d6a0dbb-7361-4f1d-8b7e-792ad8fc9c6d",
+    "name": "Lab05 - Registration API (intentional fail)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Same as the pass collection, but one oracle is intentionally altered to fail quality gate."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01. Happy path: active student with prerequisites succeeds",
+      "item": [
+        {
+          "name": "Setup student",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"status\":\"active\",\"coursesTaken\":[\"CS201\"]}" },
+            "url": {
+              "raw": "{{baseUrl}}/students/B231234567",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "B231234567"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup course",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"prerequisites\":[\"CS201\"]}" },
+            "url": {
+              "raw": "{{baseUrl}}/courses/CS313",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses", "CS313"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST registration",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "const body = pm.response.json();",
+                "pm.test('Status is 200 (intentionally wrong)', function () { pm.response.to.have.status(200); });",
+                "pm.test('Result is OK', function () { pm.expect(body.result).to.equal('OK'); });",
+                "pm.test('registrationID is present', function () { pm.expect(body).to.have.property('registrationID'); });"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"studentID\":\"B231234567\",\"courseID\":\"CS313\"}" },
+            "url": {
+              "raw": "{{baseUrl}}/registrations",
+              "host": ["{{baseUrl}}"],
+              "path": ["registrations"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02. Student does not exist",
+      "item": [
+        { "name": "Setup course", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"prerequisites\":[\"CS201\"]}" }, "url": { "raw": "{{baseUrl}}/courses/CS313", "host": ["{{baseUrl}}"], "path": ["courses", "CS313"] } }, "response": [] },
+        { "name": "POST registration", "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [ "const body = pm.response.json();", "pm.test('Status is 200', function () { pm.response.to.have.status(200); });", "pm.test('Result is ERROR_NO_STUDENT', function () { pm.expect(body.result).to.equal('ERROR_NO_STUDENT'); });" ] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"studentID\":\"B000000000\",\"courseID\":\"CS313\"}" }, "url": { "raw": "{{baseUrl}}/registrations", "host": ["{{baseUrl}}"], "path": ["registrations"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "03. Inactive student gets ERROR_INACTIVE_STUDENT",
+      "item": [
+        { "name": "Setup student", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"status\":\"inactive\",\"coursesTaken\":[\"CS201\"]}" }, "url": { "raw": "{{baseUrl}}/students/B231234568", "host": ["{{baseUrl}}"], "path": ["students", "B231234568"] } }, "response": [] },
+        { "name": "Setup course", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"prerequisites\":[\"CS201\"]}" }, "url": { "raw": "{{baseUrl}}/courses/CS313", "host": ["{{baseUrl}}"], "path": ["courses", "CS313"] } }, "response": [] },
+        { "name": "POST registration", "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [ "const body = pm.response.json();", "pm.test('Status is 200', function () { pm.response.to.have.status(200); });", "pm.test('Result is ERROR_INACTIVE_STUDENT', function () { pm.expect(body.result).to.equal('ERROR_INACTIVE_STUDENT'); });" ] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"studentID\":\"B231234568\",\"courseID\":\"CS313\"}" }, "url": { "raw": "{{baseUrl}}/registrations", "host": ["{{baseUrl}}"], "path": ["registrations"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "04. Course missing returns ERROR_NO_COURSE",
+      "item": [
+        { "name": "Setup student", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"status\":\"active\",\"coursesTaken\":[\"CS201\"]}" }, "url": { "raw": "{{baseUrl}}/students/B231234569", "host": ["{{baseUrl}}"], "path": ["students", "B231234569"] } }, "response": [] },
+        { "name": "POST registration", "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [ "const body = pm.response.json();", "pm.test('Status is 200', function () { pm.response.to.have.status(200); });", "pm.test('Result is ERROR_NO_COURSE', function () { pm.expect(body.result).to.equal('ERROR_NO_COURSE'); });" ] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"studentID\":\"B231234569\",\"courseID\":\"CS999\"}" }, "url": { "raw": "{{baseUrl}}/registrations", "host": ["{{baseUrl}}"], "path": ["registrations"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "05. Missing prerequisites returns ERROR_PREREQUISITES",
+      "item": [
+        { "name": "Setup student", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"status\":\"active\",\"coursesTaken\":[\"CS101\"]}" }, "url": { "raw": "{{baseUrl}}/students/B231234570", "host": ["{{baseUrl}}"], "path": ["students", "B231234570"] } }, "response": [] },
+        { "name": "Setup course", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"prerequisites\":[\"CS201\"]}" }, "url": { "raw": "{{baseUrl}}/courses/CS314", "host": ["{{baseUrl}}"], "path": ["courses", "CS314"] } }, "response": [] },
+        { "name": "POST registration", "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [ "const body = pm.response.json();", "pm.test('Status is 200', function () { pm.response.to.have.status(200); });", "pm.test('Result is ERROR_PREREQUISITES', function () { pm.expect(body.result).to.equal('ERROR_PREREQUISITES'); });", "pm.test('Missing prerequisite is reported', function () { pm.expect(body.missing).to.include('CS201'); });" ] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"studentID\":\"B231234570\",\"courseID\":\"CS314\"}" }, "url": { "raw": "{{baseUrl}}/registrations", "host": ["{{baseUrl}}"], "path": ["registrations"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "06. Missing studentID or courseID returns ERROR_BAD_REQUEST",
+      "item": [
+        { "name": "Setup student", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"status\":\"active\",\"coursesTaken\":[\"CS201\"]}" }, "url": { "raw": "{{baseUrl}}/students/B231234571", "host": ["{{baseUrl}}"], "path": ["students", "B231234571"] } }, "response": [] },
+        { "name": "Setup course", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"prerequisites\":[\"CS201\"]}" }, "url": { "raw": "{{baseUrl}}/courses/CS315", "host": ["{{baseUrl}}"], "path": ["courses", "CS315"] } }, "response": [] },
+        { "name": "POST registration", "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [ "const body = pm.response.json();", "pm.test('Status is 400', function () { pm.response.to.have.status(400); });", "pm.test('Result is ERROR_BAD_REQUEST', function () { pm.expect(body.result).to.equal('ERROR_BAD_REQUEST'); });" ] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"studentID\":\"B231234571\"}" }, "url": { "raw": "{{baseUrl}}/registrations", "host": ["{{baseUrl}}"], "path": ["registrations"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "07. Invalid JSON returns ERROR_BAD_JSON",
+      "item": [
+        { "name": "Setup student", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"status\":\"active\",\"coursesTaken\":[\"CS201\"]}" }, "url": { "raw": "{{baseUrl}}/students/B231234572", "host": ["{{baseUrl}}"], "path": ["students", "B231234572"] } }, "response": [] },
+        { "name": "Setup course", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"prerequisites\":[\"CS201\"]}" }, "url": { "raw": "{{baseUrl}}/courses/CS316", "host": ["{{baseUrl}}"], "path": ["courses", "CS316"] } }, "response": [] },
+        { "name": "POST registration", "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [ "const body = pm.response.json();", "pm.test('Status is 400', function () { pm.response.to.have.status(400); });", "pm.test('Result is ERROR_BAD_JSON', function () { pm.expect(body.result).to.equal('ERROR_BAD_JSON'); });" ] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"studentID\": \"B231234572\"," }, "url": { "raw": "{{baseUrl}}/registrations", "host": ["{{baseUrl}}"], "path": ["registrations"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "08. Double-fault: inactive student and missing course returns inactive error",
+      "item": [
+        { "name": "Setup student", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"status\":\"inactive\",\"coursesTaken\":[\"CS201\"]}" }, "url": { "raw": "{{baseUrl}}/students/B231234573", "host": ["{{baseUrl}}"], "path": ["students", "B231234573"] } }, "response": [] },
+        { "name": "POST registration", "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [ "const body = pm.response.json();", "pm.test('Status is 200', function () { pm.response.to.have.status(200); });", "pm.test('Result is ERROR_INACTIVE_STUDENT', function () { pm.expect(body.result).to.equal('ERROR_INACTIVE_STUDENT'); });" ] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"studentID\":\"B231234573\",\"courseID\":\"CSNOPE\"}" }, "url": { "raw": "{{baseUrl}}/registrations", "host": ["{{baseUrl}}"], "path": ["registrations"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "09. Course without prerequisites succeeds",
+      "item": [
+        { "name": "Setup student", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"status\":\"active\",\"coursesTaken\":[\"CS201\"]}" }, "url": { "raw": "{{baseUrl}}/students/B231234574", "host": ["{{baseUrl}}"], "path": ["students", "B231234574"] } }, "response": [] },
+        { "name": "Setup course", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"prerequisites\":[]}" }, "url": { "raw": "{{baseUrl}}/courses/CS317", "host": ["{{baseUrl}}"], "path": ["courses", "CS317"] } }, "response": [] },
+        { "name": "POST registration", "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [ "const body = pm.response.json();", "pm.test('Status is 201', function () { pm.response.to.have.status(201); });", "pm.test('Result is OK', function () { pm.expect(body.result).to.equal('OK'); });" ] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"studentID\":\"B231234574\",\"courseID\":\"CS317\"}" }, "url": { "raw": "{{baseUrl}}/registrations", "host": ["{{baseUrl}}"], "path": ["registrations"] } }, "response": [] }
+      ]
+    },
+    {
+      "name": "10. Empty coursesTaken is valid when no prerequisites exist",
+      "item": [
+        { "name": "Setup student", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"status\":\"active\",\"coursesTaken\":[]}" }, "url": { "raw": "{{baseUrl}}/students/B231234575", "host": ["{{baseUrl}}"], "path": ["students", "B231234575"] } }, "response": [] },
+        { "name": "Setup course", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"prerequisites\":[]}" }, "url": { "raw": "{{baseUrl}}/courses/CS318", "host": ["{{baseUrl}}"], "path": ["courses", "CS318"] } }, "response": [] },
+        { "name": "POST registration", "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [ "const body = pm.response.json();", "pm.test('Status is 201', function () { pm.response.to.have.status(201); });", "pm.test('Result is OK', function () { pm.expect(body.result).to.equal('OK'); });" ] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"studentID\":\"B231234575\",\"courseID\":\"CS318\"}" }, "url": { "raw": "{{baseUrl}}/registrations", "host": ["{{baseUrl}}"], "path": ["registrations"] } }, "response": [] }
+      ]
+    }
+  ]
+}

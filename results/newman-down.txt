@@ -1,0 +1,336 @@
+newman
+
+Lab05 - Registration API
+
+❏ 01. Happy path: active student with prerequisites succeeds
+↳ Setup student
+  PUT http://localhost:3000/students/B231234567 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS313 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ POST registration
+  POST http://localhost:3000/registrations [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+  4⠄ JSONError in test-script
+
+❏ 02. Student does not exist
+↳ Setup course
+  PUT http://localhost:3000/courses/CS313 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ POST registration
+  POST http://localhost:3000/registrations [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+  7⠄ JSONError in test-script
+
+❏ 03. Inactive student gets ERROR_INACTIVE_STUDENT
+↳ Setup student
+  PUT http://localhost:3000/students/B231234568 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS313 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ POST registration
+  POST http://localhost:3000/registrations [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+ 11⠄ JSONError in test-script
+
+❏ 04. Course missing returns ERROR_NO_COURSE
+↳ Setup student
+  PUT http://localhost:3000/students/B231234569 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ POST registration
+  POST http://localhost:3000/registrations [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+ 14⠄ JSONError in test-script
+
+❏ 05. Missing prerequisites returns ERROR_PREREQUISITES
+↳ Setup student
+  PUT http://localhost:3000/students/B231234570 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS314 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ POST registration
+  POST http://localhost:3000/registrations [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+ 18⠄ JSONError in test-script
+
+❏ 06. Missing studentID or courseID returns ERROR_BAD_REQUEST
+↳ Setup student
+  PUT http://localhost:3000/students/B231234571 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS315 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ POST registration
+  POST http://localhost:3000/registrations [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+ 22⠄ JSONError in test-script
+
+❏ 07. Invalid JSON returns ERROR_BAD_JSON
+↳ Setup student
+  PUT http://localhost:3000/students/B231234572 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS316 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ POST registration
+  POST http://localhost:3000/registrations [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+ 26⠄ JSONError in test-script
+
+❏ 08. Double-fault: inactive student and missing course returns inactive error
+↳ Setup student
+  PUT http://localhost:3000/students/B231234573 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ POST registration
+  POST http://localhost:3000/registrations [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+ 29⠄ JSONError in test-script
+
+❏ 09. Course without prerequisites succeeds
+↳ Setup student
+  PUT http://localhost:3000/students/B231234574 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS317 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ POST registration
+  POST http://localhost:3000/registrations [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+ 33⠄ JSONError in test-script
+
+❏ 10. Empty coursesTaken is valid when no prerequisites exist
+↳ Setup student
+  PUT http://localhost:3000/students/B231234575 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS318 [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+
+↳ POST registration
+  POST http://localhost:3000/registrations [errored]
+     connect ECONNREFUSED 127.0.0.1:3000
+ 37⠄ JSONError in test-script
+
+┌─────────────────────────┬──────────┬──────────┐
+│                         │ executed │   failed │
+├─────────────────────────┼──────────┼──────────┤
+│              iterations │        1 │        0 │
+├─────────────────────────┼──────────┼──────────┤
+│                requests │       27 │       27 │
+├─────────────────────────┼──────────┼──────────┤
+│            test-scripts │       10 │       10 │
+├─────────────────────────┼──────────┼──────────┤
+│      prerequest-scripts │        0 │        0 │
+├─────────────────────────┼──────────┼──────────┤
+│              assertions │        0 │        0 │
+├─────────────────────────┴──────────┴──────────┤
+│ total run duration: 534ms                     │
+├───────────────────────────────────────────────┤
+│ total data received: 0B (approx)              │
+└───────────────────────────────────────────────┘
+
+[31m   # [39m[31m failure   [39m[31m detail                                                                                                    [39m
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 01.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 02.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 03.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 04.  JSONError                                                                                                            
+                 "undefined" is not valid JSON                                                                             
+                 at test-script                                                                                            
+                 inside "01. Happy path: active student with prerequisites succeeds / POST registration"                   
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 05.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 06.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 07.  JSONError                                                                                                            
+                 "undefined" is not valid JSON                                                                             
+                 at test-script                                                                                            
+                 inside "02. Student does not exist / POST registration"                                                   
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 08.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 09.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 10.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 11.  JSONError                                                                                                            
+                 "undefined" is not valid JSON                                                                             
+                 at test-script                                                                                            
+                 inside "03. Inactive student gets ERROR_INACTIVE_STUDENT / POST registration"                             
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 12.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 13.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 14.  JSONError                                                                                                            
+                 "undefined" is not valid JSON                                                                             
+                 at test-script                                                                                            
+                 inside "04. Course missing returns ERROR_NO_COURSE / POST registration"                                   
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 15.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 16.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 17.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 18.  JSONError                                                                                                            
+                 "undefined" is not valid JSON                                                                             
+                 at test-script                                                                                            
+                 inside "05. Missing prerequisites returns ERROR_PREREQUISITES / POST registration"                        
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 19.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 20.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 21.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 22.  JSONError                                                                                                            
+                 "undefined" is not valid JSON                                                                             
+                 at test-script                                                                                            
+                 inside "06. Missing studentID or courseID returns ERROR_BAD_REQUEST / POST registration"                  
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 23.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 24.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 25.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 26.  JSONError                                                                                                            
+                 "undefined" is not valid JSON                                                                             
+                 at test-script                                                                                            
+                 inside "07. Invalid JSON returns ERROR_BAD_JSON / POST registration"                                      
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 27.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 28.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 29.  JSONError                                                                                                            
+                 "undefined" is not valid JSON                                                                             
+                 at test-script                                                                                            
+                 inside "08. Double-fault: inactive student and missing course returns inactive error / POST registration" 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 30.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 31.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 32.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 33.  JSONError                                                                                                            
+                 "undefined" is not valid JSON                                                                             
+                 at test-script                                                                                            
+                 inside "09. Course without prerequisites succeeds / POST registration"                                    
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 34.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 35.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 36.  Error                                                                                                                
+                 connect ECONNREFUSED 127.0.0.1:3000                                                                       
+                 at request                                                                                                
+                 inside ""                                                                                                 
+[90m     [39m[90m           [39m[90m                                                                                                           [39m
+ 37.  JSONError                                                                                                            
+                 "undefined" is not valid JSON                                                                             
+                 at test-script                                                                                            
+                 inside "10. Empty coursesTaken is valid when no prerequisites exist / POST registration"                  

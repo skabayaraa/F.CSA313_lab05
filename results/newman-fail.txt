@@ -1,0 +1,143 @@
+newman
+
+Lab05 - Registration API (intentional fail)
+
+❏ 01. Happy path: active student with prerequisites succeeds
+↳ Setup student
+  PUT http://localhost:3000/students/B231234567 [200 OK, 178B, 23ms]
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 3ms]
+
+↳ POST registration
+  POST http://localhost:3000/registrations [201 Created, 202B, 3ms]
+  1. Status is 200 (intentionally wrong)
+  ✓  Result is OK
+  ✓  registrationID is present
+
+❏ 02. Student does not exist
+↳ Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 3ms]
+
+↳ POST registration
+  POST http://localhost:3000/registrations [200 OK, 192B, 2ms]
+  ✓  Status is 200
+  ✓  Result is ERROR_NO_STUDENT
+
+❏ 03. Inactive student gets ERROR_INACTIVE_STUDENT
+↳ Setup student
+  PUT http://localhost:3000/students/B231234568 [200 OK, 178B, 3ms]
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 1ms]
+
+↳ POST registration
+  POST http://localhost:3000/registrations [200 OK, 198B, 2ms]
+  ✓  Status is 200
+  ✓  Result is ERROR_INACTIVE_STUDENT
+
+❏ 04. Course missing returns ERROR_NO_COURSE
+↳ Setup student
+  PUT http://localhost:3000/students/B231234569 [200 OK, 178B, 3ms]
+
+↳ POST registration
+  POST http://localhost:3000/registrations [200 OK, 191B, 2ms]
+  ✓  Status is 200
+  ✓  Result is ERROR_NO_COURSE
+
+❏ 05. Missing prerequisites returns ERROR_PREREQUISITES
+↳ Setup student
+  PUT http://localhost:3000/students/B231234570 [200 OK, 178B, 2ms]
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS314 [200 OK, 178B, 2ms]
+
+↳ POST registration
+  POST http://localhost:3000/registrations [200 OK, 215B, 1ms]
+  ✓  Status is 200
+  ✓  Result is ERROR_PREREQUISITES
+  ✓  Missing prerequisite is reported
+
+❏ 06. Missing studentID or courseID returns ERROR_BAD_REQUEST
+↳ Setup student
+  PUT http://localhost:3000/students/B231234571 [200 OK, 178B, 2ms]
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS315 [200 OK, 178B, 2ms]
+
+↳ POST registration
+  POST http://localhost:3000/registrations [400 Bad Request, 202B, 2ms]
+  ✓  Status is 400
+  ✓  Result is ERROR_BAD_REQUEST
+
+❏ 07. Invalid JSON returns ERROR_BAD_JSON
+↳ Setup student
+  PUT http://localhost:3000/students/B231234572 [200 OK, 178B, 2ms]
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS316 [200 OK, 178B, 2ms]
+
+↳ POST registration
+  POST http://localhost:3000/registrations [400 Bad Request, 199B, 2ms]
+  ✓  Status is 400
+  ✓  Result is ERROR_BAD_JSON
+
+❏ 08. Double-fault: inactive student and missing course returns inactive error
+↳ Setup student
+  PUT http://localhost:3000/students/B231234573 [200 OK, 178B, 2ms]
+
+↳ POST registration
+  POST http://localhost:3000/registrations [200 OK, 198B, 2ms]
+  ✓  Status is 200
+  ✓  Result is ERROR_INACTIVE_STUDENT
+
+❏ 09. Course without prerequisites succeeds
+↳ Setup student
+  PUT http://localhost:3000/students/B231234574 [200 OK, 178B, 2ms]
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS317 [200 OK, 178B, 1ms]
+
+↳ POST registration
+  POST http://localhost:3000/registrations [201 Created, 202B, 1ms]
+  ✓  Status is 201
+  ✓  Result is OK
+
+❏ 10. Empty coursesTaken is valid when no prerequisites exist
+↳ Setup student
+  PUT http://localhost:3000/students/B231234575 [200 OK, 178B, 2ms]
+
+↳ Setup course
+  PUT http://localhost:3000/courses/CS318 [200 OK, 178B, 2ms]
+
+↳ POST registration
+  POST http://localhost:3000/registrations [201 Created, 202B, 2ms]
+  ✓  Status is 201
+  ✓  Result is OK
+
+┌─────────────────────────┬─────────────────┬─────────────────┐
+│                         │        executed │          failed │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              iterations │               1 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│                requests │              27 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│            test-scripts │              10 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│      prerequest-scripts │               0 │               0 │
+├─────────────────────────┼─────────────────┼─────────────────┤
+│              assertions │              22 │               1 │
+├─────────────────────────┴─────────────────┴─────────────────┤
+│ total run duration: 421ms                                   │
+├─────────────────────────────────────────────────────────────┤
+│ total data received: 593B (approx)                          │
+├─────────────────────────────────────────────────────────────┤
+│ average response time: 2ms [min: 1ms, max: 23ms, s.d.: 4ms] │
+└─────────────────────────────────────────────────────────────┘
+
+[31m  # [39m[31m failure        [39m[31m detail                                                                                  [39m
+[90m    [39m[90m                [39m[90m                                                                                         [39m
+ 1.  AssertionError  Status is 200 (intentionally wrong)                                                     
+                     expected response to have status code 200 but got 201                                   
+                     at assertion:0 in test-script                                                           
+                     inside "01. Happy path: active student with prerequisites succeeds / POST registration" 
